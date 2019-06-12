@@ -32,7 +32,7 @@ namespace Demo.Jwt.Controllers
                 var claims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
-                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(100)).ToUnixTimeSeconds()}"),
+                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(30)).ToUnixTimeSeconds()}"),
                     new Claim(ClaimTypes.Name, userName)
                 };
                 //sign the token using a secret key.This secret will be shared between your API and anything that needs to check that the token is legit.
