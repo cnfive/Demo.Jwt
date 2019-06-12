@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.Jwt.Controllers
 {
-    //[Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
+        // GET api/values1
         [HttpGet]
         [Route("api/value1")]
         public ActionResult<IEnumerable<string>> Get()
@@ -19,7 +18,7 @@ namespace Demo.Jwt.Controllers
             return new string[] { "value1", "value1" };
         }
 
-        // GET api/values
+        // GET api/values2
         /**
          * 该接口用Authorize特性做了权限校验，如果没有通过权限校验，则http返回状态码为401
          * 调用该接口的正确姿势是：
