@@ -29,11 +29,12 @@ namespace Demo.Jwt.Controllers
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(pwd))
             {
                 // push the user’s name into a claim, so we can identify the user later on.
+                //这里可以随意加入自定义的参数，key可以自己随便起
                 var claims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                     new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(30)).ToUnixTimeSeconds()}"),
-                    new Claim(ClaimTypes.Name, userName)
+                    new Claim(ClaimTypes.NameIdentifier, userName)
                 };
                 //sign the token using a secret key.This secret will be shared between your API and anything that needs to check that the token is legit.
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.SecurityKey));
