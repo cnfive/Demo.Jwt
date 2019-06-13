@@ -1,6 +1,6 @@
 ﻿namespace Demo.Jwt
 {
-    public class Const
+    public static class Const
     {
         /// <summary>
         /// 这里为了演示，写死一个密钥。实际生产环境可以从配置文件读取,这个是用网上工具随便生成的一个密钥
@@ -10,5 +10,12 @@
         /// 站点地址
         /// </summary>
         public const string Domain = "http://localhost:5000";
+
+        /// <summary>
+        /// 受理人，之所以弄成可变的是为了用接口动态更改这个值以模拟强制Token失效
+        /// 真实业务场景可以在数据库或者redis存一个和用户id相关的值，生成token和验证token的时候获取到持久化的值去校验
+        /// 如果重新登陆，则刷新这个值
+        /// </summary>
+        public static string ValidAudience;
     }
 }

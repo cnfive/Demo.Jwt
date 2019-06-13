@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,8 +47,12 @@ namespace Demo.Jwt
                     ClockSkew = TimeSpan.FromSeconds(30),
 
                     ValidateAudience = true,//是否验证Audience
-                    ValidAudience = Const.Domain,//Audience
-
+                    //ValidAudience = Const.GetValidudience(),//Audience
+                    //这里采用动态验证的方式，在重新登陆时，刷新token，旧token就强制失效了
+                    AudienceValidator = (m, n, z) =>
+                    {
+                        return m != null && m.FirstOrDefault().Equals(Const.ValidAudience);
+                    },
                     ValidateIssuer = true,//是否验证Issuer
                     ValidIssuer = Const.Domain,//Issuer，这两项和前面签发jwt的设置一致
 

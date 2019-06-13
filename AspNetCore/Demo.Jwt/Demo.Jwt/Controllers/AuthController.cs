@@ -32,6 +32,8 @@ namespace Demo.Jwt.Controllers
         {
             if (CheckAccount(userName, pwd, out string role))
             {
+                //每次登陆动态刷新
+                Const.ValidAudience = userName + pwd + DateTime.Now.ToString();
                 // push the user’s name into a claim, so we can identify the user later on.
                 //这里可以随意加入自定义的参数，key可以自己随便起
                 var claims = new[]
@@ -46,10 +48,10 @@ namespace Demo.Jwt.Controllers
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 //.NET Core’s JwtSecurityToken class takes on the heavy lifting and actually creates the token.
                 var token = new JwtSecurityToken(
-                    //接收者
-                    issuer: Const.Domain,
                     //颁发者
-                    audience: Const.Domain,
+                    issuer: Const.Domain,
+                    //接收者
+                    audience: Const.ValidAudience,
                     //过期时间
                     expires: DateTime.Now.AddMinutes(30),
                     //签名证书
