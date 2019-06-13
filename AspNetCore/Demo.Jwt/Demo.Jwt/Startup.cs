@@ -36,9 +36,6 @@ namespace Demo.Jwt
                         ValidAudience = Const.Domain,//Audience
                         ValidIssuer = Const.Domain,//Issuer，这两项和前面签发jwt的设置一致
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.SecurityKey))//拿到SecurityKey
-                        ,
-                        RoleClaimTypeRetriever
-                        
                     };
                 });
 
