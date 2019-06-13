@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Demo.Jwt.Controllers
 {
@@ -43,7 +39,6 @@ namespace Demo.Jwt.Controllers
                 /**
                  * Claims (Payload)
                     Claims 部分包含了一些跟这个 token 有关的重要信息。 JWT 标准规定了一些字段，下面节选一些字段:
-
                     iss: The issuer of the token，token 是给谁的
                     sub: The subject of the token，token 主题
                     exp: Expiration Time。 token 过期时间，Unix 时间戳格式
