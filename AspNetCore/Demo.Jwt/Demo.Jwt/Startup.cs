@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Demo.Jwt.AuthManagement;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-
+using System.Threading.Tasks;
 
 namespace Demo.Jwt
 {
@@ -23,21 +25,48 @@ namespace Demo.Jwt
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //添加策略鉴权模式
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Permission", policy => policy.Requirements.Add(new PolicyRequirement()));
+            })
+            .AddAuthentication(s =>
+            {
+                //添加JWT Scheme
+                s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             //添加jwt验证：
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,//是否验证Issuer
+                    ValidateAudience = true,//是否验证Audience
+                    ValidateLifetime = true,//是否验证失效时间
+                    ClockSkew = TimeSpan.FromSeconds(30),
+                    ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                    ValidAudience = Const.Domain,//Audience
+                    ValidIssuer = Const.Domain,//Issuer，这两项和前面签发jwt的设置一致
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.SecurityKey))//拿到SecurityKey
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
                     {
-                        ValidateIssuer = true,//是否验证Issuer
-                        ValidateAudience = true,//是否验证Audience
-                        ValidateLifetime = true,//是否验证失效时间
-                        ClockSkew = TimeSpan.FromSeconds(30),
-                        ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                        ValidAudience = Const.Domain,//Audience
-                        ValidIssuer = Const.Domain,//Issuer，这两项和前面签发jwt的设置一致
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.SecurityKey))//拿到SecurityKey
-                    };
-                });
+                        //Token expired
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            //注入授权Handler
+            services.AddSingleton<IAuthorizationHandler, PolicyHandler>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
