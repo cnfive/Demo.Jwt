@@ -40,7 +40,7 @@ namespace Demo.Jwt.Controllers
         }
 
         /**
-         * 这个接口必须用user
+         * 这个接口必须用admin
          **/
         [HttpGet]
         [Route("api/value3")]
